@@ -1,43 +1,36 @@
-import { Entity, Column, PrimaryGeneratedColumn, BeforeInsert, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, BeforeInsert, ManyToOne, JoinColumn, BaseEntity } from 'typeorm';
 import { IsEmail, IsNotEmpty } from 'class-validator';
 import * as crypto from 'crypto';
 import { EmployeeEntity } from 'src/employee/entities/employee.entity'; 
 @Entity('address_table_data')
-export default class AddressEntity {
+export default class AddressEntity extends BaseEntity {
 
     @PrimaryGeneratedColumn()
     addressId:number
-    @Column()
+    @Column({nullable: true})
     employeeCode:string
     @Column()
     @IsNotEmpty()
     type:string
-    @Column()
-    @IsNotEmpty()
+    @Column({nullable: true})
     flatName:string
-    @Column()
-    @IsNotEmpty()
+    @Column({nullable: true})
     streetName:string
-    @Column()
-    @IsNotEmpty()
+    @Column({nullable: true})
     area:string
-    @Column()
-    @IsNotEmpty()
+    @Column({nullable: true})
     state:string
-    @Column()
-    @IsNotEmpty()
+    @Column({nullable: true})
     country:string
-    @Column()
-    @IsNotEmpty()
+    @Column({nullable: true})
     city:string
-    @Column()
-    @IsNotEmpty()
+    @Column({nullable: true})
     pinCode: string
-    @Column()
-    @IsNotEmpty()
+    @Column({nullable: true})
     mapCoordinates:string
     @ManyToOne(() => EmployeeEntity, employeeEntity => employeeEntity.addresses,
     {
+        cascade: ['insert', 'update'],
         lazy:true
     })
     @JoinColumn()

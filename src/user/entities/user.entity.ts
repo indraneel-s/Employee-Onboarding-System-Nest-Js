@@ -1,9 +1,9 @@
 import { EmployeeEntity } from "src/employee/entities/employee.entity";
 import internal from "stream";
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
     @Entity("user_table")
-   export class User{
+   export class User extends BaseEntity{
     @PrimaryGeneratedColumn()
     sno: number;
 

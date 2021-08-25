@@ -6,66 +6,53 @@ import { AddressRepository } from 'src/address/addressrepo';
 import { EmployeeRepository } from './employeerepo';
 import { userVo } from 'src/user/dto/uservo';
 import { EmployeeEntity } from './entities/employee.entity';
+import { UserRepository } from 'src/user/userrepo';
+import AddressEntity from 'src/address/entities/address.entity';
   
    
 
-        
-    @Injectable()
-    export class EmployeeService {
-      constructor(
-     
-        private employeeRepository: EmployeeRepository,
-        private addressRepository:AddressRepository
-      ) 
-      {}
-      @UseInterceptors(ClassSerializerInterceptor)
-  async showAll() {
-
-    let employees = await this.employeeRepository.find({ relations: ["addresses"] });
     
-  
-    return employees;
-  }
+@Injectable()
+export class EmployeeService {
+  constructor(
+ 
+    private employeeRepository: EmployeeRepository,
+    private addressRepository:AddressRepository,
+    private userRepository:UserRepository
+  ) 
+  {}
+  @UseInterceptors(ClassSerializerInterceptor)
+async showAll() {
+
+let employees = await this.employeeRepository.find({ relations: ["addresses"] });
 
 
-  async create(data: userVo) {
-    // const user = this.employeeRepository.create(data);
-    // await this.employeeRepository.save(data);
-    // let val=createQueryBuilder(EmployeeEntity).select("MAX(edt.employeeId)", "max").getRawOne;
+return employees;
+}
 
-    //    let code= "LIS"+val;
-    //    console.log("JSBGDSJFDSF",code)
-    
-       let val=await  getManager().query(`SELECT MAX(employeeId) FROM edt`);
-       
-  //  let employeeData= await this.employeeRepository.save({firstName:data.name,lastName:data.name,emailId:data.email,roleId:data.roleId,currentStatus:'INCOMPLETE'});
-     console.log("SHARATH",val.TextRow)
-    const dummy: Number=val.employeeId
-     console.log("DJFDSFDSF",dummy)
-    // console.log("FDFSDF",val[0])
-  //   console.log(this.getOneMaximumQuotationVersion)
 
-//  let val2= this.employeeRepository.find({
-//     order: {
-       
-//         employeeId: "DESC"
-//     },
+async create(data: userVo) {
+
+ 
+  let addresses = new Array<AddressEntity>(2);
+    let presentAddress=new AddressEntity()
+    presentAddress.type="Present";
+    let permanentAddress= new AddressEntity()
+    permanentAddress.type="Permanent"
+    addresses.push(presentAddress)
+    addresses.push(permanentAddress)
+  let employeeInitalDetails={firstName:data.name,lastName:data.name,emailId:data.email,roleId:data.roleId,currentStatus:'INCOMPLETE',addresses:addresses}
    
-// });
-// console.log("DSFDSFSDFSD", (await val2))
-
-
-
-  }
-    async getOneMaximumQuotationVersion() {
-      
-      let val=createQueryBuilder("edt").select("MAX(edt.employeeId)", "max").getOne;
-      return val;
-      
-  }
-  
-  
-
+  // const employee = this.employeeRepository.create(employeeInitalDetails);
+  // employee.addresses[0].type="Present";
+  // employee.addresses[1].type="Permanent";
+let employeeData= await this.employeeRepository.save(employeeInitalDetails);
+let userData=await this.userRepository.save({email:data.email,password:data.password,roleId:data.roleId,employee:employeeData})
+if(employeeData!=null&&userData!=null)
+{
+ return employeeData
+}
+}
 
 
       async read(employeeId: number) {
@@ -75,48 +62,58 @@ import { EmployeeEntity } from './entities/employee.entity';
       }
 
       async update(employeeId: number, data: EmployeeDTO) {
-      let employeeCode= String(employeeId+1)
-      let employeeDemographics={
-        employeeId:employeeId,
-        employeeCode:employeeCode,
-        firstName:data.firstName,
-        lastName:data.lastName,
-        aadharNumber:data.aadharNumber,
-        gender:data.gender,
-        emailId:data.emailId,
-        fatherName:data.fatherName,
-        motherName:data.motherName,
-        bloodGroup:data.bloodGroup,
-        dob:data.dob,
-        currentStatus:"",
-        phoneNumber:data.phoneNumber,
-        sslc:data.sslc,
-        hsc:data.hsc,
-        ug:data.ug,
-        rejectReason:"",
-        emergencyContactName:data.emergencyContactName,
-        emergencyContactPhoneNumber:data.emergencyContactPhoneNumber,
-        emergencyContactRelation:data.emergencyContactRelation
-      }
+
+        let addresses=data.addresses
+        delete data.addresses
+        let employeeCode="LIS"+employeeId;
+        data.employeeCode=employeeCode
+
+     
       if(data.action=="Submit")
       {
-        employeeDemographics.currentStatus="PENDING"
+        data.currentStatus="PENDING"
       }
       if(data.action=="Save")
       {
-        employeeDemographics.currentStatus="INCOMPLETE"
+        data.currentStatus="INCOMPLETE"
       }
-        let val=this.read(employeeId);
-       let addressId=(await val).addresses[0].addressId
       
-        await this.addressRepository.update({addressId},data.addresses[0])
-        addressId=(await val).addresses[1].addressId
-        data.addresses[1].addressId=addressId
-        await this.addressRepository.update({addressId},data.addresses[1])
-    
-        await this.employeeRepository.update({employeeId},employeeDemographics);
+       let employee=this.read(employeeId);
+       delete data.action
+       if(addresses[0]!=null&&addresses[1]!=null)
+       {
 
-      }
+       await this.employeeRepository.update({employeeId},data)
+       let addressId=(await employee).addresses[0].addressId
+       addresses[0].employeeCode=employeeCode
+       await this.addressRepository.update({addressId},addresses[0])
+       addressId= (await employee).addresses[1].addressId
+       addresses[1].employeeCode=employeeCode
+       await this.addressRepository.update({addressId},addresses[1])
+       }
+      
+    
+        
+
+      
 
     
     }
+    async updateStatus(employeeId:number,data:Partial<EmployeeDTO>)
+    {
+      if(data.currentStatus=="Approve")
+      {
+        data.currentStatus="COMPLETED"
+        data.rejectReason=""
+      }
+      else
+      {
+        data.currentStatus="REJECTED"
+      }
+      await this.employeeRepository.update({employeeId},data)
+    }
+
+
+    
+    }
+  

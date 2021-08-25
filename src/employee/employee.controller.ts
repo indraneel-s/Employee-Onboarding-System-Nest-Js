@@ -44,4 +44,8 @@ export class EmployeeController {
       await this.employeeService.create(data)
 
     }
+    @Put('/status/:id')
+    async updateStatus(@Param('id') id:number,@Body() data:Partial<EmployeeDTO>) {
+      await this.employeeService.updateStatus(id,data)
+    }
 }

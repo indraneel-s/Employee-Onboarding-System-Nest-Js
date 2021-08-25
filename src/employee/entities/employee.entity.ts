@@ -8,8 +8,8 @@ import AddressEntity from 'src/address/entities/address.entity';
 export class EmployeeEntity {
   @PrimaryGeneratedColumn()
   employeeId: number;
-  @Column()
-  @IsNotEmpty()
+  @Column({nullable: true})
+  
   employeeCode: string;
   @Column()
   @IsNotEmpty()
@@ -17,52 +17,53 @@ export class EmployeeEntity {
   @Column()
   @IsNotEmpty()
   lastName: string;
-  @Column()
-  @IsNotEmpty()
+  @Column({nullable: true})
+  
   dob:string;
-  @Column()
-  @IsNotEmpty()
+  @Column({nullable: true})
+
   bloodGroup:string;
-  @Column()
-  @IsNotEmpty()
+  @Column({nullable: true})
   aadharNumber:string;
-  @Column()
-  @IsNotEmpty()
+  @Column({nullable: true})
   fatherName:string;
-  @Column()
-  @IsNotEmpty()
+  @Column({nullable: true})
+  
   motherName:string;
   @Column()
   @IsNotEmpty()
   emailId:string;
-  @Column()
+  @Column({nullable: true})
   @IsNotEmpty()
+  roleId:number;
+  @Column({nullable: true})
+  
   phoneNumber:string;
-  @Column()
-  @IsNotEmpty()
+  @Column({nullable: true})
+  
   sslc:number;
-  @Column()
-  @IsNotEmpty()
+  @Column({nullable: true})
+  
   hsc:number;
-  @Column()
-  @IsNotEmpty()
+  @Column({nullable: true})
+  
   ug:number;
-  @Column()
-  @IsNotEmpty()
+  @Column({nullable: true})
+  
   gender:string;
-  @Column()
-  @IsNotEmpty()
+  @Column({nullable: true})
+  
   emergencyContactName:string;
-  @Column()
+  @Column({nullable: true})
   emergencyContactPhoneNumber:string;
-  @Column()
+  @Column({nullable: true})
   emergencyContactRelation:string
-  @Column()
+  @Column({nullable: true})
   currentStatus:string;
-  @Column()
+  @Column({nullable: true})
   rejectReason:string;
-  @JoinColumn()
   @OneToMany(() => AddressEntity, (addressEntity: AddressEntity) => addressEntity.emp,{ cascade: ['insert', 'update'] })
+  @JoinColumn()
   public addresses: AddressEntity[];
   
 }

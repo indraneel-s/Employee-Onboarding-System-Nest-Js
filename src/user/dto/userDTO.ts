@@ -1,7 +1,7 @@
 import { IsEmail, IsNotEmpty, IsNotEmptyObject } from "class-validator";
 import { EmployeeEntity } from "src/employee/entities/employee.entity";
 
-export class userVo {
+export class userDTO {
 
     @IsNotEmpty()
     name:string;

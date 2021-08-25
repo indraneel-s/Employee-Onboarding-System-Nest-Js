@@ -11,6 +11,7 @@ import { UserModule } from './user/user.module';
 import { User } from './user/entities/user.entity';
 import { RoleModule } from './role/role.module';
 import { RoleEntity } from './role/entities/role.entity';
+import { LoginModule } from './login/login.module';
 
 @Module({
   imports: [TypeOrmModule.forRoot({
@@ -22,7 +23,7 @@ import { RoleEntity } from './role/entities/role.entity';
     database: 'bank',
     entities: [EmployeeEntity,AddressEntity,User,RoleEntity],
     synchronize: true,
-  }),EmployeeModule, AddressModule, UserModule, RoleModule],
+  }),EmployeeModule, AddressModule, UserModule, RoleModule, LoginModule],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -4,7 +4,7 @@ import { EmployeeDTO } from 'src/employee/dto/EmployeeDTO';
 import { AddressRepository } from 'src/address/addressrepo';
     import { createQueryBuilder, getConnection, getManager, Repository } from 'typeorm';
 import { EmployeeRepository } from './employeerepo';
-import { userVo } from 'src/user/dto/uservo';
+import { userDTO } from 'src/user/dto/userDTO';
 import { EmployeeEntity } from './entities/employee.entity';
 import { UserRepository } from 'src/user/userrepo';
 import AddressEntity from 'src/address/entities/address.entity';
@@ -31,7 +31,7 @@ return employees;
 }
 
 
-async create(data: userVo) {
+async create(data: userDTO) {
 
  
   let addresses = new Array<AddressEntity>(2);
@@ -43,9 +43,6 @@ async create(data: userVo) {
     addresses.push(permanentAddress)
   let employeeInitalDetails={firstName:data.name,lastName:data.name,emailId:data.email,roleId:data.roleId,currentStatus:'INCOMPLETE',addresses:addresses}
    
-  // const employee = this.employeeRepository.create(employeeInitalDetails);
-  // employee.addresses[0].type="Present";
-  // employee.addresses[1].type="Permanent";
 let employeeData= await this.employeeRepository.save(employeeInitalDetails);
 let userData=await this.userRepository.save({email:data.email,password:data.password,roleId:data.roleId,employee:employeeData})
 if(employeeData!=null&&userData!=null)
@@ -98,7 +95,7 @@ if(employeeData!=null&&userData!=null)
       
 
     
-    }
+   }
     async updateStatus(employeeId:number,data:Partial<EmployeeDTO>)
     {
       if(data.currentStatus=="Approve")

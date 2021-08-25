@@ -3,7 +3,7 @@ import { EmployeeService } from './employee.service';
 import { HttpStatus } from '@nestjs/common';
 import { EmployeeDTO } from 'src/employee/dto/EmployeeDTO';
 import { Put } from '@nestjs/common';
-import { userVo } from 'src/user/dto/uservo';
+import { userDTO } from 'src/user/dto/userDTO';
 
 @Controller('employee')
 export class EmployeeController {
@@ -39,7 +39,7 @@ export class EmployeeController {
       };
     }
     @Post()
-    async addUser(@Body()data:userVo)
+    async addUser(@Body()data:userDTO)
     {
       await this.employeeService.create(data)
 

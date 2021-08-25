@@ -46,7 +46,7 @@ export class EmployeeDTO {
     currentStatus:string;
     @IsNotEmpty()
     rejectReason:string;
-    @IsNotEmpty()
+  @IsNotEmpty()
     public addresses: AddressEntity[];
 
     

@@ -8,6 +8,7 @@ import { userDTO } from 'src/user/dto/userDTO';
 import { EmployeeEntity } from './entities/employee.entity';
 import { UserRepository } from 'src/user/userrepo';
 import AddressEntity from 'src/address/entities/address.entity';
+import { MailService } from 'src/mail/mail.service';
   
    
 
@@ -18,7 +19,8 @@ export class EmployeeService {
  
     private employeeRepository: EmployeeRepository,
     private addressRepository:AddressRepository,
-    private userRepository:UserRepository
+    private userRepository:UserRepository,
+    private mailservice:MailService
   ) 
   {}
   @UseInterceptors(ClassSerializerInterceptor)
@@ -98,16 +100,31 @@ if(employeeData!=null&&userData!=null)
    }
     async updateStatus(employeeId:number,data:Partial<EmployeeDTO>)
     {
+      let details=this.read(employeeId);
+      // (await details).emailId
       if(data.currentStatus=="Approve")
       {
         data.currentStatus="COMPLETED"
-        data.rejectReason=""
+        data.rejectReason="";
+        
+        this.mailservice.sendUserMail("indraneel316@gmail.com","Regarding Form Completion","Your Request Has Been Approved")
+       
       }
+     
       else
       {
         data.currentStatus="REJECTED"
+       let message="Your Request Has Been Rejected because of the following reasons: "+data.rejectReason
+        this.mailservice.sendUserMail("indraneel316@gmail.com","Regarding Form Completion",message)
+
       }
       await this.employeeRepository.update({employeeId},data)
+    }
+    async notifyEmployee(id:number)
+    {
+      let details=this.read(id);
+      // (await details).emailId
+      this.mailservice.sendUserMail("indraneel316@gmail.com","Regarding Form Completion","Your Form is Not Filled. Please Submit your form to take the onboarding process to a further level")
     }
 
 

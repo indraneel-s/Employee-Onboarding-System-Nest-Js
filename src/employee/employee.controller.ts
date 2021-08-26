@@ -48,4 +48,11 @@ export class EmployeeController {
     async updateStatus(@Param('id') id:number,@Body() data:Partial<EmployeeDTO>) {
       await this.employeeService.updateStatus(id,data)
     }
+    @Post('/notify/:id')
+    async notifyEmployee(@Param('id')id:number)
+    {
+      await this.employeeService.notifyEmployee(id)
+    }
+
+
 }

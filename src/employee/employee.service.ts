@@ -9,7 +9,8 @@ import { EmployeeEntity } from './entities/employee.entity';
 import { UserRepository } from 'src/user/userrepo';
 import AddressEntity from 'src/address/entities/address.entity';
 import { MailService } from 'src/mail/mail.service';
-  
+import axios, { AxiosResponse } from 'axios'; 
+import { isNotEmptyObject } from 'class-validator';
    
 
     
@@ -21,6 +22,7 @@ export class EmployeeService {
     private addressRepository:AddressRepository,
     private userRepository:UserRepository,
     private mailservice:MailService
+
   ) 
   {}
   @UseInterceptors(ClassSerializerInterceptor)
@@ -94,20 +96,41 @@ if(employeeData!=null&&userData!=null)
     
         
 
-      
+    
 
     
    }
+   async emp(Id:Number)
+   {
+    return await this.employeeRepository.findOne({where:{employeeId:Id},relations: ["addresses"] })
+   }
     async updateStatus(employeeId:number,data:Partial<EmployeeDTO>)
     {
-      let details=this.read(employeeId);
+      let details=await this.read(employeeId);
       // (await details).emailId
       if(data.currentStatus=="Approve")
       {
         data.currentStatus="COMPLETED"
         data.rejectReason="";
+        await this.employeeRepository.update({employeeId},data)
         
         this.mailservice.sendUserMail("indraneel316@gmail.com","Regarding Form Completion","Your Request Has Been Approved")
+        delete details.createdAt
+        delete details.currentStatus
+        delete details.rejectReason
+        delete details.roleId
+        const params = JSON.stringify(details);
+       
+  
+      return await axios.put('http://localhost:3001/employee',
+        params,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }).then((res) => {
+            return res.data;
+      });
        
       }
      
@@ -116,16 +139,18 @@ if(employeeData!=null&&userData!=null)
         data.currentStatus="REJECTED"
        let message="Your Request Has Been Rejected because of the following reasons: "+data.rejectReason
         this.mailservice.sendUserMail("indraneel316@gmail.com","Regarding Form Completion",message)
-
+        await this.employeeRepository.update({employeeId},data)
       }
-      await this.employeeRepository.update({employeeId},data)
+      
     }
     async notifyEmployee(id:number)
     {
-      let details=this.read(id);
+      // let details=this.read(id);
       // (await details).emailId
       this.mailservice.sendUserMail("indraneel316@gmail.com","Regarding Form Completion","Your Form is Not Filled. Please Submit your form to take the onboarding process to a further level")
     }
+
+
 
 
     

@@ -7,14 +7,12 @@ import { HandlebarsAdapter, MailerModule } from '@nest-modules/mailer';
 @Module({
   imports: [
     MailerModule.forRoot({
-      // transport: 'smtps://user@example.com:topsecret@smtp.example.com',
-      // or
       transport: {
         host: 'smtp.gmail.com',
         secure: false,
         auth: {
-          user: 'abc@gmail.com',
-          pass: 'dsfdsfdsfdfs',
+          user: 'indraneel316@gmail.com',
+          pass: '',
         },
       },
       defaults: {

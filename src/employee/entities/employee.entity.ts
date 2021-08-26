@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, BeforeInsert, OneToMany, UsingJoinTableOnlyOnOneSideAllowedError, JoinTable, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, BeforeInsert, OneToMany, UsingJoinTableOnlyOnOneSideAllowedError, JoinTable, JoinColumn, CreateDateColumn } from 'typeorm';
 import * as crypto from 'crypto';
 import { IsNotEmpty } from 'class-validator';
 import AddressEntity from 'src/address/entities/address.entity';
@@ -33,6 +33,8 @@ export class EmployeeEntity {
   @Column()
   @IsNotEmpty()
   emailId:string;
+  @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP(6)" })
+  public createdAt: Date;
   @Column({nullable: true})
   @IsNotEmpty()
   roleId:number;
